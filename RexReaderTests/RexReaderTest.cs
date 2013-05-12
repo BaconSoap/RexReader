@@ -1,18 +1,30 @@
 ﻿using System;
 using System.IO;
 using NUnit.Framework;
-using RexReader;
+using Varnerin.RexTools;
+
 namespace RexReaderTests {
     [TestFixture]
     public class RexReaderTest {
 
-        private string SingleLayer = "data" + Path.DirectorySeparatorChar + "singleLayer.xp";
+        public readonly string SingleLayer = "data" + Path.DirectorySeparatorChar + "singleLayer.xp";
         private const string SingleLayerString = "uA                                                                                                 e";
         private const int SingleLayerWidth = 10;
         private const int SingleLayerHeight = 10;
         private const int SingleLayerLayerCount = 1;
         private Stream SingleLayerStream { get; set; }
-        public RexReader.RexReader SingleReader { get { return new RexReader.RexReader(SingleLayerStream); } }
+        public RexReader SingleReader {
+            get {
+
+                //Too lazy to make separate tests for both constructors, so instead I'll make this return a random one.
+                //They should both behave exactly the same.
+                if (new Random().Next(2) == 0) {
+                    return new RexReader(SingleLayerStream);
+                }
+
+                return new RexReader(SingleLayer);
+            }
+        }
         public const byte Space = (byte)' ';
 
         [SetUp]
@@ -28,14 +40,15 @@ namespace RexReaderTests {
             var map = new TileMap(SingleLayerWidth, SingleLayerHeight, SingleLayerLayerCount);
             for (var row = 0; row < map.Height; row++) {
                 for (var col = 0; col < map.Width; col++) {
-                    var tile = new Tile();
-                    tile.CharacterCode = Space;
-                    tile.BackgroundBlue = 255;
-                    tile.BackgroundGreen = 0;
-                    tile.BackgroundRed = 255;
-                    tile.ForegroundBlue = 0;
-                    tile.ForegroundGreen = 0;
-                    tile.ForegroundRed = 0;
+                    var tile = new Tile {
+                        CharacterCode = Space,
+                        BackgroundBlue = 255,
+                        BackgroundGreen = 0,
+                        BackgroundRed = 255,
+                        ForegroundBlue = 0,
+                        ForegroundGreen = 0,
+                        ForegroundRed = 0
+                    };
 
                     map.Layers[0].Tiles[row, col] = tile;
                 }
@@ -60,11 +73,6 @@ namespace RexReaderTests {
             map.Layers[0].Tiles[9, 9].ForegroundBlue = 255;
 
             return map;
-        }
-
-        [Test]
-        public void New_RexReader_Saves_Stream() {
-            Assert.That(SingleReader.BaseStream, Is.EqualTo(SingleLayerStream));
         }
 
         [Test]
@@ -122,9 +130,9 @@ namespace RexReaderTests {
             var badStream = new MemoryStream();
             var writer = new StreamWriter(badStream);
             writer.Flush();
-            writer.Write("oh noes");
+            writer.Write("oh noes, what terrible data!");
 
-            var reader = new RexReader.RexReader(badStream);
+            var reader = new RexReader(badStream);
             Assert.That(() => reader.GetMap(), Throws.Exception.TypeOf<InvalidDataException>());
         }
 

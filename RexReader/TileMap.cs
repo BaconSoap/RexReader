@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace RexReader {
+namespace Varnerin.RexTools {
     public class TileMap {
         public TileLayer[] Layers { get; private set; }
 

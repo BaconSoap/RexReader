@@ -3,32 +3,51 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace RexReader {
+namespace Varnerin.RexTools {
     /// <summary>
     /// Reads a compressed .xp stream and provides methods to read the data.
     /// Every operation resets the underlying stream, so feel free to call every method as many times as you want.
     /// It also caches results in case you are too lazy to set up caching on your end.
     /// </summary>
     public class RexReader {
-        public Stream BaseStream { get; private set; }
         private Stream Deflated { get; set; }
         private BinaryReader Reader { get; set; }
         private int? _layers;
 
         /// <summary>
-        /// 
+        /// Construct a RexReader from a compressed stream (of the .xp format)
+        /// </summary>
+        /// <param name="inputStream">The compressed stream of the .xp file</param>
+        public RexReader(Stream inputStream) {
+            SetupFromStream(inputStream);
+        }
+
+        /// <summary>
+        /// Construct a RexReader from a compressed stream (of the .xp format)
         /// </summary>
         /// <param name="inputStream"></param>
-        public RexReader(Stream inputStream) {
+        private void SetupFromStream(Stream inputStream) {
             Deflated = new MemoryStream();
             inputStream.Position = 0;
-            BaseStream = inputStream;
-            using (var deflate = new GZipStream(BaseStream, CompressionMode.Decompress)) {
+            using (var deflate = new GZipStream(inputStream, CompressionMode.Decompress)) {
                 deflate.CopyTo(Deflated);
             }
 
             Reader = new BinaryReader(Deflated);
             Deflated.Position = 0;
+        }
+
+        /// <summary>
+        /// Construct a RexReader from an .xp file. Throws standard errors if the file doesn't exist.
+        /// </summary>
+        /// <param name="filePath">Path to the .xp file</param>
+        public RexReader(string filePath) {
+            using (var memoryStream = new MemoryStream()) {
+                using (var filestream = new FileStream(filePath, FileMode.Open)) {
+                    filestream.CopyTo(memoryStream);
+                }
+                SetupFromStream(memoryStream);
+            }
         }
 
         /// <summary>

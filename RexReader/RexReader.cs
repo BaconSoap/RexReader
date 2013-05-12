@@ -131,16 +131,16 @@ namespace RexReader {
                 throw new InvalidDataException("Bad .xp data", e);
             }
             var map = new TileMap(width, height, layers);
-            
+
             //Move to the first tile
             Deflated.Seek(GetFirstTileOffset(), SeekOrigin.Begin);
-            
+
             //Read every tile in column-major order, and place it in the map in row-major order
             for (var layer = 0; layer < layers; layer++) {
                 for (var col = 0; col < height; col++) {
                     for (var row = 0; row < width; row++) {
                         map.Layers[layer].Tiles[row, col] = new Tile {
-                            CharacterCode = (byte) Reader.ReadInt32(),
+                            CharacterCode = (byte)Reader.ReadInt32(),
                             ForegroundRed = Reader.ReadByte(),
                             ForegroundGreen = Reader.ReadByte(),
                             ForegroundBlue = Reader.ReadByte(),

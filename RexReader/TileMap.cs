@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace RexReader {
     public class TileMap {
@@ -18,7 +14,7 @@ namespace RexReader {
             Width = width;
             Height = height;
             for (var i = 0; i < layers; i++) {
-                Layers[i] = new TileLayer(width,height);
+                Layers[i] = new TileLayer(width, height);
             }
         }
     }

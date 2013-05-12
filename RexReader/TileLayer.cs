@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RexReader {
+﻿namespace RexReader {
     public class TileLayer {
         /// <summary>
         /// A 2D array of the tiles in this layer, of the form Tiles[y,x].

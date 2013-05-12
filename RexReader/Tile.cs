@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RexReader {
+﻿namespace RexReader {
     public class Tile {
         /// <summary>
         /// ASCII-like code of the character. ASCII-like because REXPaint uses the default libtcod-style

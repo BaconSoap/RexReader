@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tile.cs" />
+    <Compile Include="TileLayer.cs" />
+    <Compile Include="TileMap.cs" />
     <Compile Include="RexReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

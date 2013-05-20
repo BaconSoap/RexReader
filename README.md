@@ -1,5 +1,5 @@
-RexReader
-=========
+RexReader 0.6
+=============
 
 A C# Library for reading REXPaint files into an easy to use format.
 

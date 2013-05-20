@@ -28,14 +28,18 @@ namespace Varnerin.RexTools {
         /// <param name="inputStream"></param>
         private void SetupFromStream(Stream inputStream) {
             Deflated = new MemoryStream();
+
+            //These are all over the place. Every method in this file should guarantee that the stream
+            // is reset, so that the abstraction doesn't leak.
             inputStream.Position = 0;
             using (var deflate = new GZipStream(inputStream, CompressionMode.Decompress)) {
-                deflate.CopyTo(Deflated);
+                CopyStream(deflate, Deflated);
             }
 
             Reader = new BinaryReader(Deflated);
             Deflated.Position = 0;
         }
+
 
         /// <summary>
         /// Construct a RexReader from an .xp file. Throws standard errors if the file doesn't exist.
@@ -44,21 +48,20 @@ namespace Varnerin.RexTools {
         public RexReader(string filePath) {
             using (var memoryStream = new MemoryStream()) {
                 using (var filestream = new FileStream(filePath, FileMode.Open)) {
-                    filestream.CopyTo(memoryStream);
+                    CopyStream(filestream, memoryStream);
                 }
                 SetupFromStream(memoryStream);
             }
         }
 
         /// <summary>
-        /// Retrieve the number of layers in the image
+        /// Retrieve the number of layers in the source file
         /// </summary>
         /// <returns>Number of layers in image</returns>
         public int GetLayerCount() {
             if (_layers.HasValue) {
                 return _layers.Value;
             }
-
 
             int layerCount = Reader.ReadInt32();
             Deflated.Position = 0;
@@ -67,7 +70,7 @@ namespace Varnerin.RexTools {
         }
 
         /// <summary>
-        /// Gets the width of the layer specified. Throws 
+        /// Gets the width of the layer specified
         /// </summary>
         /// <param name="layer">The 0-based layer number</param>
         /// <returns>The width in cells of the specified layer</returns>
@@ -114,6 +117,8 @@ namespace Varnerin.RexTools {
             //Find the starting offset of the layer
             var offset = GetFirstTileOffset();
             Deflated.Seek(offset, SeekOrigin.Begin);
+
+            //The number of bytes to skip after each character
             const int charColorSize = 6;
             for (var i = 0; i < count; i++) {
                 builder.Append((char)Reader.ReadInt32());
@@ -123,6 +128,10 @@ namespace Varnerin.RexTools {
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Get the offset of the first tile in the stream.
+        /// </summary>
+        /// <returns>The 0-based byte position</returns>
         private int GetFirstTileOffset() {
             return (32 + GetLayerCount() * 64) / 8;
         }
@@ -130,7 +139,7 @@ namespace Varnerin.RexTools {
         /// <summary>
         /// Retrieves the entire map, including all its layers. Row-major order for tiles (y, then x).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The corresponding TileMap that is contained in the .xp file</returns>
         /// <remarks>
         /// Note that (255,0,255) looks to be the 'transparent' code. But only for backgrounds?
         /// If you see magenta where you thought was black, that's why.
@@ -146,7 +155,7 @@ namespace Varnerin.RexTools {
                 width = GetLayerWidth(0);
                 height = GetLayerHeight(0);
             } catch (Exception e) {
-                Reader.Dispose();
+                ((IDisposable)Reader).Dispose();
                 throw new InvalidDataException("Bad .xp data", e);
             }
             var map = new TileMap(width, height, layers);
@@ -172,6 +181,19 @@ namespace Varnerin.RexTools {
             }
             Deflated.Seek(0, SeekOrigin.Begin);
             return map;
+        }
+
+        /// <summary>
+        /// Replicates Stream.CopyTo so I can bump down the .NET version
+        /// </summary>
+        /// <param name="source">The stream to read from</param>
+        /// <param name="destination">The stream to writed to</param>
+        private void CopyStream(Stream source, Stream destination) {
+            var buffer = new byte[4096];
+            int byt;
+            while ((byt = source.Read(buffer, 0, buffer.Length)) != 0) {
+                destination.Write(buffer, 0, byt);
+            }
         }
 
     }

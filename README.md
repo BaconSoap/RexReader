@@ -1,4 +1,4 @@
-RexReader 0.6
+RexReader 0.9
 =============
 
 Non-pretty, generated docs [are available](http://baconsoap.github.io/RexReader).

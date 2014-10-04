@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using NUnit.Framework;
-using Varnerin.RexTools;
+using RexTools;
 
 namespace RexReaderTests {
     [TestFixture]

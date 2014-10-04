@@ -1,4 +1,4 @@
-﻿namespace Varnerin.RexTools {
+﻿namespace RexTools {
     public class Tile {
         /// <summary>
         /// ASCII-like code of the character. ASCII-like because REXPaint uses the default libtcod-style

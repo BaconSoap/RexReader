@@ -1,5 +1,5 @@
 ﻿
-namespace Varnerin.RexTools {
+namespace RexTools {
     /// <summary>
     /// A two-dimensional array tiles in single or multiple layers
     /// </summary>

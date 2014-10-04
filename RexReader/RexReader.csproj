@@ -7,7 +7,7 @@
     <ProjectGuid>{0EBEF06E-1AAF-423C-990A-48FF77390764}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Varnerin.RexTools</RootNamespace>
+    <RootNamespace>RexTools</RootNamespace>
     <AssemblyName>RexReader</AssemblyName>
     <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

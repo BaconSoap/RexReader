@@ -1,4 +1,4 @@
-﻿namespace Varnerin.RexTools {
+﻿namespace RexTools {
     public class TileLayer {
         /// <summary>
         /// A 2D array of the tiles in this layer, of the form Tiles[y,x].

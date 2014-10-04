@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace Varnerin.RexTools {
+namespace RexTools {
     /// <summary>
     /// Reads a compressed .xp stream and provides methods to read the data.
     /// </summary>

@@ -10,6 +10,8 @@ Feeling lazy and don't want to build from source? The latest DLL is [here](http:
 Follow [this guide](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) to automatically install required nuget packages on build, or manually add the NUnit package/dll yourself.
 You can build the RexReader project without NUnit, but the tests require it to run.
 
+See [CHANGELOG.md](https://github.com/BaconSoap/RexReader/blob/master/CHANGELOG.md) for updates.
+
 Usage
 =====
 

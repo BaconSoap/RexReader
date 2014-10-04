@@ -13,6 +13,7 @@ namespace RexTools {
         private int? _layers;
         private int?[,] _layerSizeCache;
         private bool _disposed = false;
+        private int _layerCountOffset;
 
         private void CheckDisposed()
         {
@@ -46,6 +47,12 @@ namespace RexTools {
 
             Reader = new BinaryReader(Deflated);
             Deflated.Position = 0;
+            var firstVal = Reader.ReadInt32();
+            if (firstVal < 0)
+            {
+                _layerCountOffset = 4;
+            }
+            Deflated.Position = _layerCountOffset;
         }
 
 
@@ -72,9 +79,9 @@ namespace RexTools {
             {
                 return _layers.Value;
             }
-
+            Deflated.Position = _layerCountOffset;
             int layerCount = Reader.ReadInt32();
-            Deflated.Position = 0;
+            Deflated.Position = _layerCountOffset;
             _layers = layerCount;
             _layerSizeCache = new int?[layerCount, 2];
             return layerCount;
@@ -95,7 +102,7 @@ namespace RexTools {
                 return _layerSizeCache[layer, 0].Value;
             }
 
-            var offset = (32 + layer * 64) / 8;
+            var offset = (_layerCountOffset*8 + 32 + layer * 64) / 8;
 
             Deflated.Seek(offset, SeekOrigin.Begin);
             var width = Reader.ReadInt32();
@@ -119,7 +126,7 @@ namespace RexTools {
                 return _layerSizeCache[layer, 1].Value;
             }
 
-            var offset = (32 + 32 + layer * 64) / 8;
+            var offset = (_layerCountOffset*8 + 32 + 32 + layer * 64) / 8;
 
             Deflated.Seek(offset, SeekOrigin.Begin);
             var height = Reader.ReadInt32();
@@ -161,7 +168,7 @@ namespace RexTools {
         /// </summary>
         /// <returns>The 0-based byte position</returns>
         private int GetFirstTileOffset() {
-            return (32 + GetLayerCount() * 64) / 8;
+            return (_layerCountOffset * 8 + 32 + GetLayerCount() * 64) / 8;
         }
 
         /// <summary>

@@ -7,30 +7,43 @@ namespace RexReaderTests {
     [TestFixture]
     public class RexReaderTest {
 
+        public readonly string OldSingleLayer = "data" + Path.DirectorySeparatorChar + "singleLayer_unversioned.xp";
         public readonly string SingleLayer = "data" + Path.DirectorySeparatorChar + "singleLayer.xp";
         private const string SingleLayerString = "uA                                                                                                 e";
         private const int SingleLayerWidth = 10;
         private const int SingleLayerHeight = 10;
         private const int SingleLayerLayerCount = 1;
+        private Stream OldSingleLayerStream { get; set; }
         private Stream SingleLayerStream { get; set; }
-        public RexReader SingleReader {
-            get {
-                if (new Random().Next(2) == 0) {
-                    return new RexReader(SingleLayerStream);
-                }
-
-                return new RexReader(SingleLayer);
+        public RexReader GetSingleReader(bool oldFormat = true)
+        {
+            var stream = oldFormat ? OldSingleLayerStream : SingleLayerStream;
+            if (new Random().Next(2) == 0) {
+                return new RexReader(stream);
             }
+
+            return new RexReader(oldFormat? OldSingleLayer: SingleLayer);
         }
+        
+
+
         public const byte Space = (byte)' ';
 
         [SetUp]
         public void SetupStream() {
             var memoryStream = new MemoryStream();
-            using (var filestream = new FileStream(SingleLayer, FileMode.Open)) {
+            using (var filestream = new FileStream(SingleLayer, FileMode.Open))
+            {
                 filestream.CopyTo(memoryStream);
             }
             SingleLayerStream = memoryStream;
+
+            var memoryStreamOld = new MemoryStream();
+            using (var filestream = new FileStream(OldSingleLayer, FileMode.Open))
+            {
+                filestream.CopyTo(memoryStreamOld);
+            }
+            OldSingleLayerStream = memoryStreamOld;
         }
 
         public TileMap GetSingleLayerTestMap() {
@@ -74,52 +87,52 @@ namespace RexReaderTests {
 
         [Test]
         public void GetLayerCount_With_Single_Layer_Returns_1() {
-            Assert.That(SingleReader.GetLayerCount(), Is.EqualTo(1));
+            Assert.That(GetSingleReader().GetLayerCount(), Is.EqualTo(1));
         }
 
         [Test]
         public void GetLayerWidth_Throws_ArgumentOutOfRangeException_For_Negative_Layer() {
-            Assert.That(() => SingleReader.GetLayerWidth(-1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => GetSingleReader().GetLayerWidth(-1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void GetLayerWidth_Throws_ArgumentOutOfRangeException_For_Layer_Greater_Than_Layer_Count() {
-            Assert.That(() => SingleReader.GetLayerWidth(4), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => GetSingleReader().GetLayerWidth(4), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void GetLayerWidth_Works_For_Single_Layer() {
-            Assert.That(SingleReader.GetLayerWidth(0), Is.EqualTo(SingleLayerWidth));
+            Assert.That(GetSingleReader().GetLayerWidth(0), Is.EqualTo(SingleLayerWidth));
         }
 
         [Test]
         public void GetLayerHeight_Throws_ArgumentOutOfRangeException_For_Negative_Layer() {
-            Assert.That(() => SingleReader.GetLayerHeight(-1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => GetSingleReader().GetLayerHeight(-1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void GetLayerHeight_Throws_ArgumentOutOfRangeException_For_Layer_Greater_Than_Layer_Count() {
-            Assert.That(() => SingleReader.GetLayerHeight(4), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => GetSingleReader().GetLayerHeight(4), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void GetLayerHeight_Works_For_Single_Layer() {
-            Assert.That(SingleReader.GetLayerHeight(0), Is.EqualTo(SingleLayerHeight));
+            Assert.That(GetSingleReader().GetLayerHeight(0), Is.EqualTo(SingleLayerHeight));
         }
 
         [Test]
         public void ReadLayerAsString_Throws_ArgumentOutOfRangeException_For_Negative_Layer() {
-            Assert.That(() => SingleReader.ReadLayerAsString(-1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => GetSingleReader().ReadLayerAsString(-1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void ReadLayerAsString_Throws_ArgumentOutOfRangeException_For_Layer_Greater_Than_Layer_Count() {
-            Assert.That(() => SingleReader.ReadLayerAsString(1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => GetSingleReader().ReadLayerAsString(1), Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void ReadLayerAsString_Works_For_Single_Layer() {
-            Assert.That(SingleReader.ReadLayerAsString(0), Is.EqualTo(SingleLayerString));
+            Assert.That(GetSingleReader().ReadLayerAsString(0), Is.EqualTo(SingleLayerString));
         }
 
         [Test]
@@ -135,23 +148,23 @@ namespace RexReaderTests {
 
         [Test]
         public void GetMap_Stores_LayerCount() {
-            Assert.That(SingleReader.GetMap().LayerCount, Is.EqualTo(SingleLayerLayerCount));
+            Assert.That(GetSingleReader().GetMap().LayerCount, Is.EqualTo(SingleLayerLayerCount));
         }
 
         [Test]
         public void GetMap_Stores_Width() {
-            Assert.That(SingleReader.GetMap().Width, Is.EqualTo(SingleLayerWidth));
+            Assert.That(GetSingleReader().GetMap().Width, Is.EqualTo(SingleLayerWidth));
         }
 
         [Test]
         public void GetMap_Stores_Height() {
-            Assert.That(SingleReader.GetMap().Width, Is.EqualTo(SingleLayerHeight));
+            Assert.That(GetSingleReader().GetMap().Width, Is.EqualTo(SingleLayerHeight));
         }
 
         [Test]
         public void GetMap_Sets_Character_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(expected.Layers[0].Tiles[row, col].CharacterCode, Is.EqualTo(actual.Layers[0].Tiles[row, col].CharacterCode));
@@ -162,7 +175,7 @@ namespace RexReaderTests {
         [Test]
         public void GetMap_Sets_ForegroundRed_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(expected.Layers[0].Tiles[row, col].ForegroundRed, Is.EqualTo(actual.Layers[0].Tiles[row, col].ForegroundRed));
@@ -173,7 +186,7 @@ namespace RexReaderTests {
         [Test]
         public void GetMap_Sets_ForegroundGreen_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(expected.Layers[0].Tiles[row, col].ForegroundGreen, Is.EqualTo(actual.Layers[0].Tiles[row, col].ForegroundGreen));
@@ -184,7 +197,7 @@ namespace RexReaderTests {
         [Test]
         public void GetMap_Sets_ForegroundBlue_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(expected.Layers[0].Tiles[row, col].ForegroundBlue, Is.EqualTo(actual.Layers[0].Tiles[row, col].ForegroundBlue));
@@ -195,7 +208,7 @@ namespace RexReaderTests {
         [Test]
         public void GetMap_Sets_BackgroundRed_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(actual.Layers[0].Tiles[row, col].BackgroundRed, Is.EqualTo(expected.Layers[0].Tiles[row, col].BackgroundRed), "row " + row + " col " + col);
@@ -206,7 +219,7 @@ namespace RexReaderTests {
         [Test]
         public void GetMap_Sets_BackgroundGreen_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(actual.Layers[0].Tiles[row, col].BackgroundGreen, Is.EqualTo(expected.Layers[0].Tiles[row, col].BackgroundGreen));
@@ -217,7 +230,7 @@ namespace RexReaderTests {
         [Test]
         public void GetMap_Sets_BackgroundBlue_For_Single_Layer() {
             var expected = GetSingleLayerTestMap();
-            var actual = SingleReader.GetMap();
+            var actual = GetSingleReader().GetMap();
             for (var row = 0; row < expected.Height; row++) {
                 for (var col = 0; col < expected.Width; col++) {
                     Assert.That(actual.Layers[0].Tiles[row, col].BackgroundBlue, Is.EqualTo(expected.Layers[0].Tiles[row, col].BackgroundBlue), "row " + row + " col " + col);
@@ -228,7 +241,7 @@ namespace RexReaderTests {
         [Test]
         public void RexReader_Disposes()
         {
-            var reader = SingleReader;
+            var reader = GetSingleReader();
             reader.Dispose();
             Assert.Throws<ObjectDisposedException>(() => reader.GetMap());
             Assert.Throws<ObjectDisposedException>(() => reader.GetLayerCount());

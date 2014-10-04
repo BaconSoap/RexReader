@@ -15,9 +15,6 @@ namespace RexReaderTests {
         private Stream SingleLayerStream { get; set; }
         public RexReader SingleReader {
             get {
-
-                //Too lazy to make separate tests for both constructors, so instead I'll make this return a random one.
-                //They should both behave exactly the same.
                 if (new Random().Next(2) == 0) {
                     return new RexReader(SingleLayerStream);
                 }
@@ -226,6 +223,18 @@ namespace RexReaderTests {
                     Assert.That(actual.Layers[0].Tiles[row, col].BackgroundBlue, Is.EqualTo(expected.Layers[0].Tiles[row, col].BackgroundBlue), "row " + row + " col " + col);
                 }
             }
+        }
+
+        [Test]
+        public void RexReader_Disposes()
+        {
+            var reader = SingleReader;
+            reader.Dispose();
+            Assert.Throws<ObjectDisposedException>(() => reader.GetMap());
+            Assert.Throws<ObjectDisposedException>(() => reader.GetLayerCount());
+            Assert.Throws<ObjectDisposedException>(() => reader.GetLayerWidth(0));
+            Assert.Throws<ObjectDisposedException>(() => reader.GetLayerHeight(0));
+            Assert.Throws<ObjectDisposedException>(() => reader.ReadLayerAsString(0));
         }
     }
 }

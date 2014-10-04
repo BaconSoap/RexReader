@@ -6,13 +6,21 @@ using System.Text;
 namespace Varnerin.RexTools {
     /// <summary>
     /// Reads a compressed .xp stream and provides methods to read the data.
-    /// Every operation resets the underlying stream, so feel free to call every method as many times as you want.
-    /// It also caches results in case you are too lazy to set up caching on your end.
     /// </summary>
-    public class RexReader {
+    public class RexReader: IDisposable {
         private Stream Deflated { get; set; }
         private BinaryReader Reader { get; set; }
         private int? _layers;
+        private int?[,] _layerSizeCache;
+        private bool _disposed = false;
+
+        private void CheckDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException("RexReader");
+            }
+        }
 
         /// <summary>
         /// Construct a RexReader from a compressed stream (of the .xp format)
@@ -59,13 +67,16 @@ namespace Varnerin.RexTools {
         /// </summary>
         /// <returns>Number of layers in image</returns>
         public int GetLayerCount() {
-            if (_layers.HasValue) {
+            CheckDisposed();
+            if (_layers.HasValue)
+            {
                 return _layers.Value;
             }
 
             int layerCount = Reader.ReadInt32();
             Deflated.Position = 0;
             _layers = layerCount;
+            _layerSizeCache = new int?[layerCount, 2];
             return layerCount;
         }
 
@@ -75,12 +86,20 @@ namespace Varnerin.RexTools {
         /// <param name="layer">The 0-based layer number</param>
         /// <returns>The width in cells of the specified layer</returns>
         public int GetLayerWidth(int layer) {
+            CheckDisposed();
             if (layer < 0 || layer >= GetLayerCount())
                 throw new ArgumentOutOfRangeException("layer");
+
+            if (_layerSizeCache[layer, 0].HasValue)
+            {
+                return _layerSizeCache[layer, 0].Value;
+            }
+
             var offset = (32 + layer * 64) / 8;
 
             Deflated.Seek(offset, SeekOrigin.Begin);
             var width = Reader.ReadInt32();
+            _layerSizeCache[layer, 0] = width;
             Deflated.Seek(0, SeekOrigin.Begin);
             return width;
         }
@@ -91,12 +110,20 @@ namespace Varnerin.RexTools {
         /// <param name="layer">The 0-based layer number</param>
         /// <returns>The height in cells of the specified layer</returns>
         public int GetLayerHeight(int layer) {
+            CheckDisposed();
             if (layer < 0 || layer >= GetLayerCount())
                 throw new ArgumentOutOfRangeException("layer");
+
+            if (_layerSizeCache[layer, 1].HasValue)
+            {
+                return _layerSizeCache[layer, 1].Value;
+            }
+
             var offset = (32 + 32 + layer * 64) / 8;
 
             Deflated.Seek(offset, SeekOrigin.Begin);
             var height = Reader.ReadInt32();
+            _layerSizeCache[layer, 1] = height;
             Deflated.Seek(0, SeekOrigin.Begin);
             return height;
         }
@@ -108,6 +135,7 @@ namespace Varnerin.RexTools {
         /// <param name="layer"></param>
         /// <returns></returns>
         public string ReadLayerAsString(int layer) {
+            CheckDisposed();
             if (layer < 0 || layer >= GetLayerCount())
                 throw new ArgumentOutOfRangeException("layer");
 
@@ -145,6 +173,7 @@ namespace Varnerin.RexTools {
         /// If you see magenta where you thought was black, that's why.
         /// </remarks>
         public TileMap GetMap() {
+            CheckDisposed();
             int layers;
             int width;
             int height;
@@ -196,5 +225,11 @@ namespace Varnerin.RexTools {
             }
         }
 
+        public void Dispose()
+        {
+            _disposed = true;
+            Deflated.Dispose();
+            Reader.Close();
+        }
     }
 }

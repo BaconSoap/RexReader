@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RexReader", "RexReader\RexReader.csproj", "{0EBEF06E-1AAF-423C-990A-48FF77390764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RexReaderTests", "RexReaderTests\RexReaderTests.csproj", "{F18BEF4E-1CA0-45DA-8868-635D02B2C63D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EBEF06E-1AAF-423C-990A-48FF77390764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EBEF06E-1AAF-423C-990A-48FF77390764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EBEF06E-1AAF-423C-990A-48FF77390764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EBEF06E-1AAF-423C-990A-48FF77390764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F18BEF4E-1CA0-45DA-8868-635D02B2C63D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F18BEF4E-1CA0-45DA-8868-635D02B2C63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F18BEF4E-1CA0-45DA-8868-635D02B2C63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F18BEF4E-1CA0-45DA-8868-635D02B2C63D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

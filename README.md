@@ -1,5 +1,5 @@
-RexReader 0.9
-=============
+# RexReader 0.9 [![Build status](https://ci.appveyor.com/api/projects/status/m2wv5c3v5bgr47vb?svg=true)](https://ci.appveyor.com/project/BaconSoap/rexreader)
+
 
 Non-pretty, generated docs [are available](http://baconsoap.github.io/RexReader).
 

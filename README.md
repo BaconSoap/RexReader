@@ -19,6 +19,7 @@ The test suite is pretty comprehensive if you want to get a feel of using this. 
 var reader = new RexReader("path/to/exported/file.xp");
 var map = RexReader.GetMap();
 ```
+
 The TileMap structure is (roughly):
 
     | TileMap

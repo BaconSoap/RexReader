@@ -1,27 +1,25 @@
-# RexReader [![Build status](https://ci.appveyor.com/api/projects/status/m2wv5c3v5bgr47vb?svg=true)](https://ci.appveyor.com/project/BaconSoap/rexreader)
-
+# RexReader [![Build status](https://ci.appveyor.com/api/projects/status/m2wv5c3v5bgr47vb?svg=true)](https://ci.appveyor.com/project/BaconSoap/rexreader) [![NuGet Version](https://img.shields.io/nuget/v/RexReader.svg)](https://www.nuget.org/packages/RexReader/)
 
 Non-pretty, generated docs [are available](http://baconsoap.github.io/RexReader).
 
-A C# Library for reading REXPaint files into an easy to use format.
+A lightweight .NET Library for reading REXPaint files into an easy to use format.
 
-Follow [this guide](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) to automatically install required nuget packages on build, or manually add the NUnit package/dll yourself.
+Install from the NuGet Manager in Visual Studio or from the package manager console using `Install-Package RexReader`.
 
 You can build the RexReader project without NUnit, but the tests require it to run.
 
 See [CHANGELOG.md](https://github.com/BaconSoap/RexReader/blob/master/CHANGELOG.md) for updates.
 
-Usage
-=====
+## Usage
 
-The test suite is pretty comprehensive if you want to get a feel of using this. Otherwise, the basic usage is:
+The test suite is comprehensive if you want to get a feel of using this. Otherwise, the basic usage is:
 
 ```csharp
 var reader = new RexReader("path/to/exported/file.xp");
 var map = RexReader.GetMap();
 ```
 
-The TileMap structure is (roughly):
+The TileMap structure is:
 
     | TileMap
     | | TileLayer[] Layers
@@ -34,8 +32,7 @@ The TileMap structure is (roughly):
     | | | | byte BackgroundGreen
     | | | | byte BackgroundBlue
 
-License
-=======
+## License
 
 This format reader is licensed under the MIT license.
 

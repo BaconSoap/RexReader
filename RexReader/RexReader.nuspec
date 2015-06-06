@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>RexReader</id>
+    <version>$version$</version>
+    <title>RexReader</title>
+    <authors>Andrew Varnerin</authors>
+    <owners>Andrew Varnerin</owners>
+		<licenseUrl>https://raw.githubusercontent.com/BaconSoap/RexReader/master/license</licenseUrl>
+		<projectUrl>https://github.com/baconsoap/rexreader</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET library for reading REXPaint files</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>REXPaint</tags>
+  </metadata>
+</package>

@@ -201,8 +201,8 @@ namespace RexTools {
 
             //Read every tile in column-major order, and place it in the map in row-major order
             for (var layer = 0; layer < layers; layer++) {
-                for (var col = 0; col < height; col++) {
-                    for (var row = 0; row < width; row++) {
+                for (var col = 0; col < width; col++) {
+                    for (var row = 0; row < height; row++) {
                         map.Layers[layer].Tiles[row, col] = new Tile {
                             CharacterCode = (byte)Reader.ReadInt32(),
                             ForegroundRed = Reader.ReadByte(),
